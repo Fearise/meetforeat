@@ -1,22 +1,20 @@
-<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>О нас – MeetForEat</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="media-query.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="media-query.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         body {
-    font-family: 'Poppins', sans-serif;  /* ✅ Единый шрифт */
-    background: #f8f9fa;
-    margin: 0;
-    padding: 0;
-}
-
+            font-family: 'Poppins', sans-serif; /* ✅ Единый шрифт */
+            background: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
 
         /* === Герой-секция с фоном === */
         .about-hero {
@@ -45,7 +43,6 @@
             line-height: 1.6;
         }
 
-        
         /* === Кнопка "Наверх" === */
         .butt-up {
             position: fixed;
@@ -236,7 +233,7 @@
 <nav class="nav" id="nav">
     <div class="logo">
         <a href="../index.php">
-            <img src="../images/Иконки и логотип/logo.png" alt="MeetForEat">
+            <img src="../images/Иконки и логотип/logo.png" alt="MeetForEat" />
         </a>
     </div>
     <div class="nav-menu">
@@ -245,20 +242,19 @@
         <a class="nav_item" href="../support/support.php">Поддержка</a>
         <a class="nav_item" href="../about/about.php">О нас</a>
 
-        <?php if (isset($_SESSION['login'])): ?>
-            <a class="nav_item" href="../profile/profile.php">Профиль</a>
-            <p>
-                <a class="nav_item" href="../cart/cart.php">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span id="cart-count" class="cart-counter">
-                        <?= $_SESSION['cart_count'] ?? 0 ?>
-                    </span>
-                </a>
-            </p>
-        <?php else: ?>
-            <a class="nav_item" href="../login/login.php">Войти</a>
-            <a class="nav_item" href="../reg/reg.php">Регистрация</a>
-        <?php endif; ?>
+        <!-- Предполагаемое отображение для авторизованных пользователей -->
+        <!-- Замените на нужное условие или статичное значение -->
+        <a class="nav_item" href="../profile/profile.php">Профиль</a>
+        <p>
+            <a class="nav_item" href="../cart/cart.php">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count" class="cart-counter">0</span>
+            </a>
+        </p>
+        <!-- Для неавторизованных пользователей:
+        <a class="nav_item" href="../login/login.php">Войти</a>
+        <a class="nav_item" href="../reg/reg.php">Регистрация</a>
+        -->
     </div>
 </nav>
 
@@ -382,7 +378,6 @@
     </div>
 </footer>
 
-
 <script>
     // Кнопка "Наверх"
     document.addEventListener('DOMContentLoaded', () => {
@@ -405,21 +400,21 @@
     });
 
     function updateCartCount() {
-    const count = <?= $_SESSION['cart_count'] ?? 0 ?>;
-    const counter = document.getElementById('cart-count');
-    if (counter) {
-        counter.textContent = count;
-        
-        // Анимация
-        counter.style.animation = 'none';
-        setTimeout(() => {
-            counter.style.animation = 'pop 0.3s ease';
-        }, 10);
-    }
-}
+        const count = 0; // Статическое значение вместо PHP
+        const counter = document.getElementById('cart-count');
+        if (counter) {
+            counter.textContent = count;
 
-// Вызываем при загрузке
-document.addEventListener('DOMContentLoaded', updateCartCount);
+            // Анимация
+            counter.style.animation = 'none';
+            setTimeout(() => {
+                counter.style.animation = 'pop 0.3s ease';
+            }, 10);
+        }
+    }
+
+    // Вызываем при загрузке
+    document.addEventListener('DOMContentLoaded', updateCartCount);
 </script>
 </body>
 </html>
