@@ -1,0 +1,587 @@
+/* === ОБЩИЕ ПРАВИЛА АДАПТИВА === */
+
+/* Основные брейкпоинты */
+/* 
+   480px  — Очень маленькие экраны (XS)
+   600px  — Маленькие экраны (SM)
+   768px  — Планшеты (MD)
+   1024px — Ноутбуки и планшеты в ландшафте (LG)
+*/
+
+/* === 1. ОБЩИЕ КОНТЕЙНЕРЫ === */
+
+.container,
+.popular_items,
+.discount_items,
+.title_about,
+.title_gallery,
+.title_support,
+.product-detail {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+        max-height: 1200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+}
+
+
+/* === 2. НАВИГАЦИЯ (.nav) === */
+
+@media (max-width: 550px) {
+    .nav {
+        flex-direction: column;
+        align-items: center;
+        padding: 60px 20px 15px;
+        text-align: center;
+    }
+
+    .logo {
+        max-width: 180px;
+        margin: 0 auto 10px;
+    }
+
+    .logo a {
+        justify-content: center;
+    }
+
+    .nav-menu {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        padding: 0;
+    }
+
+    .nav-menu p {
+        margin: 5px 0;
+    }
+}
+
+
+/* === 3. СЛАЙДЕР (КАРУСЕЛЬ) === */
+
+@media (max-width: 600px) {
+    .slider button {
+        font-size: 6vw;
+        padding: 8px;
+    }
+}
+
+@media (max-width: 400px) {
+    .slider button {
+        font-size: 4vw;
+        padding: 6px;
+    }
+}
+
+
+/* === 4. ПОПУЛЯРНЫЕ ТОВАРЫ (.popular_item) === */
+
+@media (max-width: 1024px) {
+    .popular_item {
+        flex: 1 1 calc(45% - 20px);
+    }
+}
+
+@media (max-width: 768px) {
+    .popular_item {
+        flex: 1 1 100%;
+        max-width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .popular_item h2,
+    .popular_item h3 {
+        font-size: 1rem;
+    }
+
+    .item_buy input[type="submit"],
+    .item_info input[type="submit"] {
+        width: 120px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+
+    .popular_items {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .item_buy input[type="submit"],
+    .item_info input[type="submit"] {
+        width: 100px;
+        height: 30px;
+        font-size: 0.8rem;
+    }
+
+    .popular_item h2,
+    .popular_item h3 {
+        font-size: 1.2rem;
+    }
+}
+
+
+/* === 5. АКЦИИ И СКИДКИ (.discount_item) === */
+
+@media (max-width: 1024px) {
+    .discount_item {
+        flex: 1 1 45%;
+    }
+}
+
+@media (max-width: 768px) {
+    .discount_item {
+        flex: 1 1 100%;
+        max-width: 80%;
+        margin: 10px auto;
+    }
+
+    .discount_item h2,
+    .discount_item h3 {
+        font-size: 1rem;
+    }
+
+    .discount_items {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .discount_item h2,
+    .discount_item h3 {
+        font-size: 1.2rem;
+    }
+}
+
+
+/* === 6. КАТАЛОГ ТОВАРОВ (.item) === */
+
+@media (max-width: 1024px) {
+    .item {
+        flex: 1 1 calc(45% - 40px);
+    }
+
+    .catalog_filter {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .item {
+        flex: 1 1 100%;
+        max-width: 90%;
+        margin: 10px 18px;
+    }
+
+    .catalog_filter {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .catalog_filter label,
+    .catalog_filter select {
+        width: 80%;
+        text-align: center;
+        margin: 8px 0;
+    }
+}
+
+
+/* === 7. ГАЛЕРЕЯ (.gallery .item) === */
+
+@media (max-width: 1024px) {
+    .gallery .item h3 {
+        font-size: 1.1rem;
+    }
+
+    .gallery .item p {
+        font-size: 0.9rem;
+    }
+
+    .form_support {
+        padding: 15px;
+    }
+
+    .form_support input[type="submit"] {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .gallery {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .gallery .item {
+        max-width: 90%;
+        margin: 15px 0;
+    }
+
+    .form_support {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .form_support input[type="submit"] {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .title_gallery,
+    .title_support {
+        font-size: 1.5rem;
+    }
+
+    .gallery .item h3 {
+        font-size: 1rem;
+    }
+
+    .gallery .item p {
+        font-size: 0.8rem;
+    }
+
+    .form_support {
+        padding: 10px;
+    }
+
+    .form_support input[type="submit"] {
+        font-size: 0.75rem;
+    }
+}
+
+
+/* === 8. О НАС (.about) === */
+
+@media (max-width: 1024px) {
+    .title_about {
+        font-size: 1.75rem;
+    }
+
+    .about {
+        padding: 15px;
+        font-size: 1rem;
+        margin-bottom: 250px;
+    }
+
+    .footer_about {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 768px) {
+    .title_about {
+        font-size: 1.5rem;
+    }
+
+    .about {
+        padding: 10px;
+        font-size: 0.9rem;
+        margin: 1rem auto;
+        margin-bottom: 250px;
+    }
+
+    .footer_about {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .title_about {
+        font-size: 1.2rem;
+    }
+
+    .about {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+}
+
+
+/* === 9. ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ === */
+
+@media (max-width: 600px) {
+    .profile-btns {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .profile-btn {
+        width: 100%;
+        font-size: 18px;
+        padding: 12px;
+    }
+
+    .profile_h1 {
+        font-size: 20px;
+    }
+
+    .profile-info {
+        font-size: 18px;
+    }
+}
+
+
+/* === 10. ФОРМЫ: РЕГИСТРАЦИЯ, ВХОД === */
+
+@media (max-width: 600px) {
+    .form-container h2 {
+        font-size: 20px;
+    }
+
+    .form_reg,
+    .form_login {
+        padding: 15px;
+        max-width: 90%;
+    }
+
+    .reg_line,
+    .login_line {
+        width: 70%;
+    }
+}
+
+
+/* === 11. КОРЗИНА (.cart) === */
+
+@media (max-width: 768px) {
+    .cart {
+        padding: 10px;
+    }
+
+    .cart_title {
+        font-size: 1.5rem;
+    }
+
+    .cart li {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .clear_cart,
+    .main_cart,
+    .order {
+        width: 100%;
+        margin: 10px 0;
+        text-align: center;
+    }
+
+    .cart_line {
+        width: 50%;
+    }
+}
+
+@media (max-width: 480px) {
+    .cart {
+        padding: 5px;
+    }
+
+    .cart_title {
+        font-size: 1.2rem;
+    }
+
+    .clear_cart,
+    .main_cart,
+    .order {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+}
+
+
+/* === 12. ДЕТАЛИ ТОВАРА (.product-detail) === */
+
+@media (max-width: 1024px) {
+    .product-detail {
+        width: 85%;
+        padding: 40px;
+    }
+
+    .product-detail h1 {
+        font-size: 35px;
+    }
+
+    .price {
+        font-size: 19px;
+    }
+
+    .description {
+        font-size: 15px;
+        line-height: 22px;
+    }
+
+    .buy-form input[type="submit"],
+    .back-form {
+        width: 130px;
+        height: 40px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 768px) {
+    .product-detail {
+        width: 80%;
+        padding: 50px;
+    }
+
+    .product-detail h1 {
+        font-size: 30px;
+    }
+
+    .price {
+        font-size: 18px;
+    }
+
+    .description {
+        font-size: 16px;
+        line-height: 24px;
+    }
+
+    .buy-form input[type="submit"],
+    .back-form {
+        width: 120px;
+        height: 40px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-detail {
+        width: 90%;
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    .product-detail h1 {
+        font-size: 24px;
+    }
+
+    .price {
+        font-size: 16px;
+    }
+
+    .description {
+        font-size: 14px;
+        line-height: 20px;
+    }
+
+    .buy-form input[type="submit"],
+    .back-form {
+        width: 100px;
+        font-size: 12px;
+    }
+}
+
+
+/* === 13. ФУТЕР === */
+
+@media (min-width: 768px) {
+    .footer {
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 50px;
+        height: 300px;
+    }
+
+    .buyers, .owners, .short_about, .contacts {
+        margin: 20px 20px;
+        width: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer {
+        flex-direction: column;
+        padding: 20px;
+        height: auto;
+    }
+
+    .buyers, .owners, .short_about, .contacts {
+        width: 200px;
+        text-align: center;
+        margin: 15px auto;
+    }
+}
+
+
+/* === 14. ИСТОРИЯ ЗАКАЗОВ (.orders-table / .orders-cards) === */
+
+@media (max-width: 768px) {
+    .orders-table {
+        display: none;
+    }
+
+    .orders-cards {
+        display: block;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo img {
+        width: 120px;
+        height: auto;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    .order-card-item {
+        flex-direction: column;
+        font-family: Arial, sans-serif;
+    }
+
+    .order-card-label {
+        margin-bottom: 3px;
+    }
+
+    .order-card-value {
+        text-align: left;
+    }
+}
+
+
+/* === 15. КОНТЕЙНЕРЫ: ФОРМЫ, РЕГИСТРАЦИЯ, ВХОД === */
+
+@media (max-width: 600px) {
+    .profile_h1 {
+        font-size: 20px;
+    }
+
+    .profile-info {
+        font-size: 18px;
+    }
+}
+
+
+/* === 16. СЧЁТЧИК ПРОСМОТРОВ === */
+
+@media (max-width: 400px) {
+    .view-count {
+        font-size: calc(0.6em + 0.2vw);
+        padding: 3px 6px;
+    }
+
+    .view-count img {
+        width: 16px;
+        height: 16px;
+        margin-right: 6px;
+    }
+}

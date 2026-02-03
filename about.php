@@ -1,0 +1,425 @@
+<?php session_start(); ?>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О нас – MeetForEat</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/media-query.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+    font-family: 'Poppins', sans-serif;  /* ✅ Единый шрифт */
+    background: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+
+        /* === Герой-секция с фоном === */
+        .about-hero {
+            height: 80vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../images/О нас/food-hero.jpg') center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 20px;
+        }
+
+        .about-hero h1 {
+            font-size: 3.8em;
+            margin: 0 0 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .about-hero p {
+            font-size: 1.4em;
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        
+        /* === Кнопка "Наверх" === */
+        .butt-up {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+        }
+
+        .btn-up {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: #e94e77;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(233, 78, 119, 0.4);
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .btn-up.btn-up_show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .btn-up:hover {
+            background: #d03a60;
+            transform: scale(1.1);
+        }
+
+        /* === Основной контент === */
+        main {
+            padding: 80px 20px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.4em;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        .about-text {
+            text-align: center;
+            font-size: 1.1em;
+            line-height: 1.7;
+            color: #555;
+            max-width: 900px;
+            margin: 0 auto 50px;
+        }
+
+        /* === Преимущества === */
+        .advantages {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+
+        .advantage-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .advantage-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .advantage-card i {
+            font-size: 3em;
+            color: #e94e77;
+            margin-bottom: 15px;
+        }
+
+        .advantage-card h3 {
+            margin: 0 0 12px;
+            font-size: 1.3em;
+            color: #2c3e50;
+        }
+
+        .advantage-card p {
+            margin: 0;
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        /* === Услуги === */
+        .services {
+            background: #fef8f5;
+            padding: 60px 20px;
+            border-radius: 20px;
+            margin: 60px 0;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .service-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        .service-card i {
+            font-size: 2.5em;
+            color: #e94e77;
+            margin-bottom: 15px;
+        }
+
+        .service-card h3 {
+            margin: 0 0 10px;
+            font-size: 1.2em;
+            color: #2c3e50;
+        }
+
+        .service-card p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* === Контакты === */
+        .contact-info {
+            text-align: center;
+            margin: 60px 0;
+            font-size: 1.1em;
+            color: #444;
+        }
+
+        .contact-info i {
+            color: #e94e77;
+            margin-right: 8px;
+        }
+
+        .contact-info p {
+            margin: 12px 0;
+        }
+
+        /* === Адаптив === */
+        @media (max-width: 768px) {
+            .about-hero h1 {
+                font-size: 2.5em;
+            }
+            .about-hero p {
+                font-size: 1.1em;
+            }
+            .section-title {
+                font-size: 1.8em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .about-hero {
+                height: 70vh;
+            }
+            .about-hero h1 {
+                font-size: 2em;
+            }
+            .nav-menu {
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body class="about_body">
+
+<!-- Навигация -->
+<nav class="nav" id="nav">
+    <div class="logo">
+        <a href="../index.php">
+            <img src="../images/Иконки и логотип/logo.png" alt="MeetForEat">
+        </a>
+    </div>
+    <div class="nav-menu">
+        <a class="nav_item" href="../catalog/catalog.php">Меню</a>
+        <a class="nav_item" href="../gallery/gallery.php">Галерея</a>
+        <a class="nav_item" href="../support/support.php">Поддержка</a>
+        <a class="nav_item" href="../about/about.php">О нас</a>
+
+        <?php if (isset($_SESSION['login'])): ?>
+            <a class="nav_item" href="../profile/profile.php">Профиль</a>
+            <p>
+                <a class="nav_item" href="../cart/cart.php">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="cart-counter">
+                        <?= $_SESSION['cart_count'] ?? 0 ?>
+                    </span>
+                </a>
+            </p>
+        <?php else: ?>
+            <a class="nav_item" href="../login/login.php">Войти</a>
+            <a class="nav_item" href="../reg/reg.php">Регистрация</a>
+        <?php endif; ?>
+    </div>
+</nav>
+
+<!-- Кнопка "Наверх" -->
+<div class="butt-up">
+    <button class="btn-up btn-up_hide" id="btn-up"><i class="fas fa-arrow-up"></i></button>
+</div>
+
+<!-- Герой-секция -->
+<section class="about-hero">
+    <h1>Добро пожаловать в MeetForEat</h1>
+    <p>
+        Быстрая доставка вкусных блюд от проверенных ресторанов — прямо к вам домой или в офис.
+    </p>
+</section>
+
+<!-- Основной контент -->
+<main>
+    <h2 class="section-title">Почему нас выбирают</h2>
+    <p class="about-text">
+        MeetForEat — это удобная платформа для заказа еды из лучших заведений города. Мы объединяем вкус, качество и скорость, чтобы вы могли наслаждаться любимой едой без лишних хлопот.
+    </p>
+
+    <!-- Преимущества -->
+    <div class="advantages">
+        <div class="advantage-card">
+            <i class="fas fa-bolt"></i>
+            <h3>Быстрая доставка</h3>
+            <p>Заказ приедет за 30–45 минут, горячий и в целости.</p>
+        </div>
+        <div class="advantage-card">
+            <i class="fas fa-utensils"></i>
+            <h3>Широкий выбор</h3>
+            <p>Бургеры, пицца, суши, шаурма, десерты — всё в одном приложении.</p>
+        </div>
+        <div class="advantage-card">
+            <i class="fas fa-leaf"></i>
+            <h3>Качество еды</h3>
+            <p>Работаем только с проверенными и сертифицированными ресторанами.</p>
+        </div>
+        <div class="advantage-card">
+            <i class="fas fa-smile"></i>
+            <h3>Удобный сервис</h3>
+            <p>Простой интерфейс, отзывы, рейтинг и круглосуточная поддержка.</p>
+        </div>
+    </div>
+
+    <!-- Услуги -->
+    <h2 class="section-title">Как это работает</h2>
+    <div class="services">
+        <div class="services-grid">
+            <div class="service-card">
+                <i class="fas fa-search"></i>
+                <h3>Выберите блюдо</h3>
+                <p>Откройте меню и найдите, что хочется прямо сейчас.</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Оформите заказ</h3>
+                <p>Добавьте в корзину и укажите адрес доставки.</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-motorcycle"></i>
+                <h3>Доставка</h3>
+                <p>Курьер заберёт еду и быстро привезёт вам.</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-heart"></i>
+                <h3>Наслаждайтесь</h3>
+                <p>Ешьте с удовольствием — оставьте отзыв!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Контакты -->
+    <h2 class="section-title">Свяжитесь с нами</h2>
+    <div class="contact-info">
+        <p><i class="fas fa-phone"></i> 8 800 555 35 35</p>
+        <p><i class="fas fa-envelope"></i> info@meetforeat.ru</p>
+        <p><i class="fas fa-map-marker-alt"></i> Москва, ул. Енисейская, 15</p>
+        <p><i class="fas fa-clock"></i> Работаем 24/7</p>
+    </div>
+</main>
+
+<!-- Футер -->
+<footer class="footer">
+    <div class="footer-col">
+        <h4>Меню</h4>
+        <ul>
+            <li><a href="../catalog/catalog.php?category=Бургеры">Бургеры</a></li>
+            <li><a href="../catalog/catalog.php?category=Пицца">Пицца</a></li>
+            <li><a href="../catalog/catalog.php?category=Суши">Суши</a></li>
+            <li><a href="../catalog/catalog.php?category=Шаурма">Шаурма</a></li>
+            <li><a href="../catalog/catalog.php?category=Выпечка">Выпечка</a></li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h4>О нас</h4>
+        <ul>
+            <li><a href="../about/about.php">О компании</a></li>
+            <li><a href="../gallery/gallery.php">Галерея</a></li>
+            <li><a href="../support/support.php">Поддержка</a></li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h4>Контакты</h4>
+        <ul>
+            <li><i class="fas fa-phone"></i> 8 800 555 35 35</li>
+            <li><i class="fas fa-envelope"></i> info@meetforeat.ru</li>
+            <li><i class="fas fa-map-marker-alt"></i> Москва, ул. Енисейская, 15</li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h4>Мы в соцсетях</h4>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-vk"></i></a>
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+    </div>
+</footer>
+
+
+<script>
+    // Кнопка "Наверх"
+    document.addEventListener('DOMContentLoaded', () => {
+        const btnUp = document.getElementById('btn-up');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                btnUp.classList.add('btn-up_show');
+            } else {
+                btnUp.classList.remove('btn-up_show');
+            }
+        });
+
+        btnUp.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    function updateCartCount() {
+    const count = <?= $_SESSION['cart_count'] ?? 0 ?>;
+    const counter = document.getElementById('cart-count');
+    if (counter) {
+        counter.textContent = count;
+        
+        // Анимация
+        counter.style.animation = 'none';
+        setTimeout(() => {
+            counter.style.animation = 'pop 0.3s ease';
+        }, 10);
+    }
+}
+
+// Вызываем при загрузке
+document.addEventListener('DOMContentLoaded', updateCartCount);
+</script>
+</body>
+</html>

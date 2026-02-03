@@ -1,0 +1,336 @@
+<?php session_start(); ?>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Меню – MeetForEat</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/media-query.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* === СТИЛИ КАК БЫЛИ === */
+        .catalog-container { padding: 100px 20px 60px; max-width: 1200px; margin: 0 auto; }
+        .catalog-title { text-align: center; font-size: 2.4em; color: #2c3e50; margin-bottom: 30px; font-weight: 600; }
+        .catalog-filters { display: flex; flex-wrap: wrap; gap: 15px; align-items: center; padding: 20px; background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom: 40px; border: 1px solid #eaeaea; }
+        .search-box { flex: 1; min-width: 200px; position: relative; }
+        .search-box input { width: 100%; padding: 14px 20px 14px 48px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 1em; outline: none; }
+        .search-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #999; font-size: 1.1em; }
+        .category-tabs { display: flex; gap: 10px; flex: 2; min-width: 300px; overflow-x: auto; padding: 6px; background: #f8f9fa; border-radius: 12px; white-space: nowrap; scrollbar-width: none; }
+        .category-tabs::-webkit-scrollbar { display: none; }
+        .filter-tab { padding: 10px 18px; background: #f4f4f4; border-radius: 8px; font-size: 0.95em; white-space: nowrap; cursor: pointer; transition: all 0.3s ease; color: #555; border: none; }
+        .filter-tab:hover { background: #e94e77; color: white; }
+        .filter-tab.active { background: #e94e77; color: white; font-weight: 600; }
+        .sort-select { flex: 0 0 auto; min-width: 200px; }
+        .sort-select select { width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 0.95em; background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23999' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") no-repeat right 12px center; background-size: 16px; appearance: none; outline: none; cursor: pointer; }
+
+        .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; padding: 10px; max-width: 1200px; margin: 0 auto; justify-content: center; align-items: start; }
+        .product-card-main { display: flex; flex-direction: column; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 6px 16px rgba(0,0,0,0.08); transition: transform 0.3s ease; position: relative; max-width: 280px; margin: 0 auto; }
+        .product-card-main:hover { transform: translateY(-6px); }
+        .buttons-main { display: flex; gap: 10px; margin-top: 12px; padding: 0 16px 16px; }
+        .btn-main { padding: 12px 0; border-radius: 8px; border: none; cursor: pointer; transition: all 0.3s ease; font-size: 1em; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .btn-buy-main { background: #e94e77; color: white; flex: 1; }
+        .btn-buy-main:hover { background: #d03a60; transform: scale(1.02); }
+        .btn-details-main { background: #3498db; color: white; width: 48px; min-width: 48px; padding: 0; }
+        .btn-details-main:hover { background: #2980b9; transform: scale(1.05); }
+
+       
+
+        /* === КНОПКА "НАВЕРХ" === */
+        .butt-up {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+        }
+        .btn-up {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: #e94e77;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(233, 78, 119, 0.4);
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .btn-up.btn-up_show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .btn-up:hover {
+            background: #d03a60;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Навигация -->
+<nav class="nav" id="nav">
+    <div class="logo">
+        <a href="../index.php">
+            <img src="../images/Иконки и логотип/logo.png" alt="MeetForEat">
+        </a>
+    </div>
+    <div class="nav-menu">
+        <a class="nav_item" href="../catalog/catalog.php">Меню</a>
+        <a class="nav_item" href="../gallery/gallery.php">Галерея</a>
+        <a class="nav_item" href="../support/support.php">Поддержка</a>
+        <a class="nav_item" href="../about/about.php">О нас</a>
+
+        <?php if (isset($_SESSION['login'])): ?>
+            <a class="nav_item" href="../profile/profile.php">Профиль</a>
+            <p>
+                <a class="nav_item" href="../cart/cart.php">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="cart-counter">
+                        <?= $_SESSION['cart_count'] ?? 0 ?>
+                    </span>
+                </a>
+            </p>
+        <?php else: ?>
+            <a class="nav_item" href="../login/login.php">Войти</a>
+            <a class="nav_item" href="../reg/reg.php">Регистрация</a>
+        <?php endif; ?>
+    </div>
+</nav>
+
+<!-- Кнопка "Наверх" -->
+<div class="butt-up">
+    <button class="btn-up btn-up_hide" id="btn-up"><i class="fas fa-arrow-up"></i></button>
+</div>
+
+<main class="catalog-container">
+    <h2 class="catalog-title">Наши блюда</h2>
+    <div class="catalog-filters">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Поиск блюд...">
+        </div>
+        <div class="category-tabs" id="categoryTabs">
+            <button class="filter-tab active" data-filter="all">Все</button>
+            <button class="filter-tab" data-filter="Бургеры">Бургеры</button>
+            <button class="filter-tab" data-filter="Пицца">Пицца</button>
+            <button class="filter-tab" data-filter="Суши">Суши</button>
+            <button class="filter-tab" data-filter="Шаурма">Шаурма</button>
+            <button class="filter-tab" data-filter="Выпечка">Выпечка</button>
+        </div>
+        <div class="sort-select">
+            <select id="sortSelect">
+                <option value="name-asc">А–Я</option>
+                <option value="name-desc">Я–А</option>
+                <option value="price-asc">Дешёвые</option>
+                <option value="price-desc">Дорогие</option>
+            </select>
+        </div>
+    </div>
+    <div class="catalog-grid" id="catalogGrid">
+        <?php
+        require_once('../sql.php');
+        $sql = "SELECT id, name, description, price, image, category, discount FROM menu_items WHERE available = 1 ORDER BY category, name";
+        $result = $conn->query($sql);
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $id = (int)$row['id'];
+                $name = htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8');
+                $desc = htmlspecialchars($row['description'], ENT_QUOTES, 'UTF-8');
+                $desc = mb_strlen($desc, 'UTF-8') > 60 ? mb_substr($desc, 0, 60, 'UTF-8') . '...' : $desc;
+                $original_price = (float)$row['price'];
+                $discount = (int)($row['discount'] ?? 0);
+                $discounted_price = $discount > 0 ? $original_price * (1 - $discount / 100) : $original_price;
+                $item_category = htmlspecialchars($row['category'] ?? 'Разное', ENT_QUOTES, 'UTF-8');
+                $image = htmlspecialchars($row['image'], ENT_QUOTES, 'UTF-8');
+                $original_formatted = number_format($original_price, 2, ',', ' ');
+                $discounted_formatted = number_format($discounted_price, 2, ',', ' ');
+
+                echo "
+                <div class='product-card-main' data-category='$item_category' data-name='$name' data-price='$discounted_price'>
+                    " . ($discount > 0 ? "<div class='product-badge-main discount'>-$discount%</div>" : "<div class='product-badge-main'>Хит</div>") . "
+                    <div class='product-img-wrapper-main'>
+                        <img src='../images/Блюда/$image' alt='$name' class='product-img-main'>
+                    </div>
+                    <div class='product-info-main'>
+                        <h3 class='product-title-main'>$name</h3>
+                        <p class='product-desc-main'>$desc</p>
+                        <p class='product-price-main'>
+                            <b>$discounted_formatted ₽</b>
+                            " . ($discount > 0 ? "<span class='old-price-main'>$original_formatted ₽</span>" : "") . "
+                        </p>
+                        <div class='buttons-main' style='display: flex; gap: 10px; margin-top: 12px; padding: 0 16px 16px;'>
+                            <form class='add-to-cart-form' method='POST' action='/cart/add_to_cart.php' style='flex: 1;'>
+                                <input type='hidden' name='product_id' value='$id'>
+                                <input type='hidden' name='name' value='$name'>
+                                <input type='hidden' name='price' value='$discounted_price'>
+                                <button type='submit' class='btn-main btn-buy-main' style='width: 100%; text-decoration: none;'>
+                                    <i class='fas fa-plus'></i> В корзину
+                                </button>
+                            </form>
+                            <a href='../item_info/item_info.php?id=$id' class='btn-main btn-details-main' style='width: 48px; min-width: 48px; text-decoration: none; display: flex; align-items: center; justify-content: center;'>
+                                <i class='fas fa-info-circle'></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>";
+            }
+        } else {
+            echo "<p style='grid-column: 1 / -1; text-align: center; color: #888;'>Нет доступных блюд.</p>";
+        }
+        $conn->close();
+        ?>
+    </div>
+</main>
+
+<!-- Футер -->
+<footer class="footer">
+    <div class="footer-col">
+        <h4>Меню</h4>
+        <ul>
+            <li><a href="../catalog/catalog.php?category=Бургеры">Бургеры</a></li>
+            <li><a href="../catalog/catalog.php?category=Пицца">Пицца</a></li>
+            <li><a href="../catalog/catalog.php?category=Суши">Суши</a></li>
+            <li><a href="../catalog/catalog.php?category=Шаурма">Шаурма</a></li>
+            <li><a href="../catalog/catalog.php?category=Выпечка">Выпечка</a></li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h4>О нас</h4>
+        <ul>
+            <li><a href="../about/about.php">О компании</a></li>
+            <li><a href="../gallery/gallery.php">Галерея</a></li>
+            <li><a href="../support/support.php">Поддержка</a></li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h4>Контакты</h4>
+        <ul>
+            <li><i class="fas fa-phone"></i> 8 800 555 35 35</li>
+            <li><i class="fas fa-envelope"></i> info@meetforeat.ru</li>
+            <li><i class="fas fa-map-marker-alt"></i> Москва, ул. Енисейская, 15</li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h4>Мы в соцсетях</h4>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-vk"></i></a>
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // === КНОПКА "НАВЕРХ" ===
+        const btnUp = document.getElementById('btn-up');
+        if (btnUp) {
+            window.addEventListener('scroll', () => {
+                btnUp.classList.toggle('btn-up_show', window.scrollY > 300);
+            });
+            btnUp.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        // === ОБНОВЛЕНИЕ СЧЁТЧИКА КОРЗИНЫ ===
+        function updateCartCount(newCount) {
+            const counter = document.getElementById('cart-count');
+            if (counter) {
+                counter.textContent = newCount;
+                counter.style.animation = 'none';
+                setTimeout(() => {
+                    counter.style.animation = 'pop 0.3s ease';
+                }, 10);
+            }
+        }
+
+        // === ОБРАБОТКА ФОРМ ДОБАВЛЕНИЯ В КОРЗИНУ ===
+        const forms = document.querySelectorAll('.add-to-cart-form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+
+                fetch('/cart/add_to_cart.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Сеть: ошибка ' + response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success && typeof data.count !== 'undefined') {
+                        updateCartCount(data.count);
+                    } else {
+                        alert('Ошибка: ' + (data.message || 'Не удалось добавить товар'));
+                    }
+                })
+                .catch(err => {
+                    console.error('Ошибка добавления:', err);
+                    alert('Не удалось добавить товар в корзину. Проверьте подключение.');
+                });
+            });
+        });
+
+        // === ФИЛЬТРЫ, ПОИСК, СОРТИРОВКА ===
+        const tabs = document.querySelectorAll('.filter-tab');
+        const searchInput = document.getElementById('searchInput');
+        const sortSelect = document.getElementById('sortSelect');
+        const container = document.getElementById('catalogGrid');
+        const items = Array.from(container.querySelectorAll('.product-card-main'));
+
+        function applyFilters() {
+            const activeFilter = document.querySelector('.filter-tab.active').dataset.filter;
+            const searchValue = searchInput.value.toLowerCase();
+            const sortOrder = sortSelect.value;
+
+            let filtered = items.filter(item => {
+                const matchesCategory = activeFilter === 'all' || item.dataset.category === activeFilter;
+                const matchesSearch = item.dataset.name.toLowerCase().includes(searchValue);
+                return matchesCategory && matchesSearch;
+            });
+
+            // Сортировка
+            filtered.sort((a, b) => {
+                if (sortOrder === 'name-asc') return a.dataset.name.localeCompare(b.dataset.name);
+                if (sortOrder === 'name-desc') return b.dataset.name.localeCompare(a.dataset.name);
+                if (sortOrder === 'price-asc') return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+                if (sortOrder === 'price-desc') return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+                return 0;
+            });
+
+            // Перерисовка
+            container.innerHTML = '';
+            filtered.forEach(item => container.appendChild(item));
+        }
+
+        // События
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                applyFilters();
+            });
+        });
+
+        searchInput.addEventListener('input', applyFilters);
+        sortSelect.addEventListener('change', applyFilters);
+
+        // Применить фильтры при загрузке
+        applyFilters();
+
+        // Обновление счётчика при загрузке (на всякий случай)
+        updateCartCount(<?= $_SESSION['cart_count'] ?? 0 ?>);
+    });
+</script>
+</body>
+</html>

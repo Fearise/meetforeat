@@ -1,0 +1,317 @@
+<?php session_start(); ?>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MeetForEat – Быстрая доставка вкусной еды</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/media-query.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="https://meetforeat.ru/favicon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="https://meetforeat.ru/favicon.png" type="image/x-icon">
+</head>
+<body>
+
+<!-- Навигация -->
+<nav class="nav" id="nav">
+    <div class="logo">
+        <a href="../index.php">
+            <img src="../images/Иконки и логотип/logo.png" alt="MeetForEat">
+        </a>
+    </div>
+    <div class="nav-menu">
+        <a class="nav_item" href="../catalog/catalog.php">Меню</a>
+        <a class="nav_item" href="../gallery/gallery.php">Галерея</a>
+        <a class="nav_item" href="../support/support.php">Поддержка</a>
+        <a class="nav_item" href="../about/about.php">О нас</a>
+
+        <?php if (isset($_SESSION['login'])): ?>
+            <a class="nav_item" href="../profile/profile.php">Профиль</a>
+            <p>
+                <a class="nav_item" href="../cart/cart.php">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="cart-counter">
+                        <?= $_SESSION['cart_count'] ?? 0 ?>
+                    </span>
+                </a>
+            </p>
+        <?php else: ?>
+            <a class="nav_item" href="../login/login.php">Войти</a>
+            <a class="nav_item" href="../reg/reg.php">Регистрация</a>
+        <?php endif; ?>
+    </div>
+</nav>
+
+<!-- Кнопка "Наверх" -->
+<div class="butt-up">
+    <button class="btn-up btn-up_hide" id="btn-up"><i class="fas fa-arrow-up"></i></button>
+</div>
+
+<main>
+    <!-- Слайдер -->
+    <section class="block_one">
+        <div class="slider" id="slider">
+            <div class="slides" id="slides">
+                <?php
+                require_once("sql.php");
+                $sql_slider = "SELECT id, name, description, price, image, discount FROM menu_items WHERE available=1 ORDER BY id DESC LIMIT 5";
+                $result_slider = $conn->query($sql_slider);
+                if ($result_slider->num_rows > 0) {
+                    $i = 0;
+                    while ($row = $result_slider->fetch_assoc()) {
+                        $name = htmlspecialchars($row['name']);
+                        $desc = htmlspecialchars($row['description']);
+                        $price = (float)$row['price'];
+                        $discount = (int)($row['discount'] ?? 0);
+                        $discounted_price = $discount > 0 ? $price * (1 - $discount / 100) : $price;
+                        $price_formatted = number_format($price, 2, ',', ' ');
+                        $discounted_formatted = number_format($discounted_price, 2, ',', ' ');
+                        $image = htmlspecialchars($row['image']);
+                        $id = (int)$row['id'];
+                        $activeClass = $i === 0 ? ' active' : '';
+                        echo '<div class="slide' . $activeClass . '">';
+                        echo '<img src="images/Блюда/' . $image . '" alt="' . $name . '">';
+                        echo '<div class="description">';
+                        echo '<h3>' . $name . '</h3>';
+                        echo '<p>' . $desc . '</p>';
+                        if ($discount > 0) {
+                            echo '<div class="price">';
+                            echo '<span style="text-decoration: line-through; color: #ccc;">' . $price_formatted . ' ₽</span> ';
+                            echo '<b>' . $discounted_formatted . ' ₽</b>';
+                            echo '<span class="discount-badge">-' . $discount . '%</span>';
+                            echo '</div>';
+                        } else {
+                            echo '<div class="price">Цена: <b>' . $price_formatted . ' ₽</b></div>';
+                        }
+                        echo '<a href="../catalog/catalog.php" class="slide-btn">Заказать</a>';
+                        echo '</div></div>';
+                        $i++;
+                    }
+                } else {
+                    echo '<div class="slide active"><div class="description"><p>Нет блюд для отображения</p></div></div>';
+                }
+                ?>
+            </div>
+            <div class="slider-dots" id="slider-dots">
+                <?php
+                $result_slider->data_seek(0);
+                $i = 0;
+                while ($row = $result_slider->fetch_assoc()) {
+                    $active = $i === 0 ? 'dot active' : 'dot';
+                    echo "<span class='$active' data-slide='$i'></span>";
+                    $i++;
+                }
+                ?>
+            </div>
+        </div>
+    </section>
+
+    <!-- Карточки товаров -->
+    <section class="cards-section">
+        <h2 class="section-title">Популярные блюда</h2>
+        <div class="products-main" id="products-container">
+            <?php
+            require_once("sql.php");
+            $filter = isset($_GET['filter']) ? trim($_GET['filter']) : '';
+            $sql_products = "SELECT id, name, description, price, image, category, discount FROM menu_items WHERE available=1";
+            if ($filter !== 'all' && !empty($filter)) {
+                $filter = $conn->real_escape_string($filter);
+                $sql_products .= " AND category = '$filter'";
+            }
+            $sql_products .= " ORDER BY views DESC LIMIT 8";
+            $result_products = $conn->query($sql_products);
+
+            if ($result_products->num_rows > 0) {
+                while ($product_main = $result_products->fetch_assoc()) {
+                    $name = htmlspecialchars($product_main['name']);
+                    $desc = htmlspecialchars($product_main['description']);
+                    $desc = mb_strlen($desc, 'UTF-8') > 60 ? mb_substr($desc, 0, 60, 'UTF-8') . '...' : $desc;
+                    $price = (float)$product_main['price'];
+                    $discount = (int)($product_main['discount'] ?? 0);
+                    $discounted_price = $discount > 0 ? $price * (1 - $discount / 100) : $price;
+                    $price_formatted = number_format($price, 2, ',', ' ');
+                    $discounted_formatted = number_format($discounted_price, 2, ',', ' ');
+                    $image = htmlspecialchars($product_main['image']);
+                    $category = htmlspecialchars($product_main['category'] ?? 'Разное');
+                    $id = (int)$product_main['id'];
+
+                    echo '
+                    <div class="product-card-main" data-category="' . $category . '">
+                        ' . ($discount > 0 
+                            ? '<div class="product-badge-main discount">-' . $discount . '%</div>' 
+                            : '<div class="product-badge-main">Хит</div>') . '
+                        <div class="product-img-wrapper-main">
+                            <img src="images/Блюда/' . $image . '" alt="' . $name . '" class="product-img-main">
+                        </div>
+                        <div class="product-info-main">
+                            <h3 class="product-title-main">' . $name . '</h3>
+                            <p class="product-desc-main">' . $desc . '</p>
+                            <p class="product-price-main">
+                                <b>' . $discounted_formatted . ' ₽</b>
+                                ' . ($discount > 0 ? '<span class="old-price-main">' . $price_formatted . ' ₽</span>' : '') . '
+                            </p>
+                            <div class="buttons-main" style="display: flex; gap: 10px; margin-top: 12px; padding: 0 16px 16px;">
+                                <form class="add-to-cart-form" method="POST" action="/cart/add_to_cart.php" style="flex: 1;">
+                                    <input type="hidden" name="product_id" value="' . $id . '">
+                                    <input type="hidden" name="name" value="' . $name . '">
+                                    <input type="hidden" name="price" value="' . number_format($discounted_price, 2, '.', '') . '">
+                                    <button type="submit" class="btn-main btn-buy-main" style="width: 100%; text-decoration: none;">
+                                        <i class="fas fa-plus"></i> В корзину
+                                    </button>
+                                </form>
+                                <a href="../item_info/item_info.php?id=' . $id . '" 
+                                   class="btn-main btn-details-main" 
+                                   style="width: 48px; min-width: 48px; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-info-circle"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>';
+                }
+            } else {
+                echo '<p class="no-products">Нет блюд в этой категории.</p>';
+            }
+            $conn->close();
+            ?>
+        </div>
+    </section>
+
+    <!-- Преимущества -->
+    <section class="features">
+        <div class="feature-box">
+            <i class="fas fa-motorcycle fa-3x"></i>
+            <h4>Доставка за 30 минут</h4>
+            <p>Горячая еда уже через полчаса — или бесплатно!</p>
+        </div>
+        <div class="feature-box">
+            <i class="fas fa-heart fa-3x"></i>
+            <h4>Готовим с любовью</h4>
+            <p>Свежие ингредиенты и проверенные рецепты.</p>
+        </div>
+        <div class="feature-box">
+            <i class="fas fa-shield-alt fa-3x"></i>
+            <h4>Гарантия качества</h4>
+            <p>Проверяем каждое блюдо перед отправкой.</p>
+        </div>
+    </section>
+</main>
+
+<!-- Футер -->
+<footer class="footer">
+    <div class="footer-col">
+        <h4>Меню</h4>
+        <ul>
+            <li><a href="../catalog/catalog.php?category=Бургеры">Бургеры</a></li>
+            <li><a href="../catalog/catalog.php?category=Пицца">Пицца</a></li>
+            <li><a href="../catalog/catalog.php?category=Суши">Суши</a></li>
+            <li><a href="../catalog/catalog.php?category=Шаурма">Шаурма</a></li>
+            <li><a href="../catalog/catalog.php?category=Выпечка">Выпечка</a></li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h4>О нас</h4>
+        <ul>
+            <li><a href="../about/about.php">О компании</a></li>
+            <li><a href="../gallery/gallery.php">Галерея</a></li>
+            <li><a href="../support/support.php">Поддержка</a></li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h4>Контакты</h4>
+        <ul>
+            <li><i class="fas fa-phone"></i> 8 800 555 35 35</li>
+            <li><i class="fas fa-envelope"></i> info@meetforeat.ru</li>
+            <li><i class="fas fa-map-marker-alt"></i> Москва, ул. Енисейская, 15</li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h4>Мы в соцсетях</h4>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-vk"></i></a>
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // === КНОПКА "НАВЕРХ" ===
+        const btnUp = document.getElementById('btn-up');
+        if (btnUp) {
+            window.addEventListener('scroll', () => {
+                btnUp.classList.toggle('btn-up_show', window.scrollY > 300);
+            });
+            btnUp.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        // === ОБНОВЛЕНИЕ СЧЁТЧИКА ===
+        function updateCartCount(newCount) {
+            const counter = document.getElementById('cart-count');
+            if (counter) {
+                counter.textContent = newCount;
+                // Анимация
+                counter.style.animation = 'none';
+                setTimeout(() => {
+                    counter.style.animation = 'pop 0.3s ease';
+                }, 10);
+            }
+        }
+
+        // === ДОБАВЛЕНИЕ В КОРЗИНУ ===
+        const forms = document.querySelectorAll('.add-to-cart-form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+
+                fetch('/cart/add_to_cart.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Ошибка сети');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success && data.count !== undefined) {
+                        updateCartCount(data.count);
+                    } else {
+                        alert('Ошибка: ' + (data.message || 'Неизвестная'));
+                    }
+                })
+                .catch(err => {
+                    console.error('Ошибка:', err);
+                    alert('Не удалось добавить в корзину.');
+                });
+            });
+        });
+
+        // === СЛАЙДЕР ===
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+        if (slides.length === 0) return;
+        let currentSlide = 0;
+        function showSlide(index) {
+            slides.forEach((s, i) => s.classList.toggle('active', i === index));
+            dots.forEach((d, i) => d.classList.toggle('active', i === index));
+            currentSlide = index;
+        }
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }, 5000);
+        dots.forEach((dot, i) => {
+            dot.addEventListener('click', () => showSlide(i));
+        });
+        showSlide(0);
+    });
+</script>
+</body>
+</html>

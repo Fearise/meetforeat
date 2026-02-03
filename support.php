@@ -1,0 +1,220 @@
+<?php
+session_start();
+require_once("../sql.php");
+
+// Получаем последние 5 отзывов
+$sql_reviews = "SELECT id, name, email, description, rating, created_at FROM support ORDER BY created_at DESC LIMIT 5";
+$result_reviews = $conn->query($sql_reviews);
+$reviews = [];
+if ($result_reviews->num_rows > 0) {
+    while ($row = $result_reviews->fetch_assoc()) {
+        $reviews[] = $row;
+    }
+}
+
+// Пытаемся найти последний отзыв текущего пользователя (по сессии)
+$my_review = null;
+if (isset($_SESSION['user_name']) && isset($_SESSION['user_email'])) {
+    $stmt = $conn->prepare("SELECT id, name, email, description, rating FROM support WHERE name = ? AND email = ? ORDER BY created_at DESC LIMIT 1");
+    $stmt->bind_param("ss", $_SESSION['user_name'], $_SESSION['user_email']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $my_review = $result->fetch_assoc();
+    }
+    $stmt->close();
+}
+$conn->close();
+?>
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поддержка – MeetForEat</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/media-query.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Навигация -->
+<nav class="nav" id="nav">
+    <div class="logo">
+        <a href="../index.php">
+            <img src="../images/Иконки и логотип/logo.png" alt="MeetForEat">
+        </a>
+    </div>
+    <div class="nav-menu">
+        <a class="nav_item" href="../catalog/catalog.php">Меню</a>
+        <a class="nav_item" href="../gallery/gallery.php">Галерея</a>
+        <a class="nav_item" href="../support/support.php">Поддержка</a>
+        <a class="nav_item" href="../about/about.php">О нас</a>
+
+        <?php if (isset($_SESSION['login'])): ?>
+            <a class="nav_item" href="../profile/profile.php">Профиль</a>
+            <p>
+                <a class="nav_item" href="../cart/cart.php">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="cart-counter">
+                        <?= $_SESSION['cart_count'] ?? 0 ?>
+                    </span>
+                </a>
+            </p>
+        <?php else: ?>
+            <a class="nav_item" href="../login/login.php">Войти</a>
+            <a class="nav_item" href="../reg/reg.php">Регистрация</a>
+        <?php endif; ?>
+    </div>
+</nav>
+
+<!-- Кнопка "Наверх" -->
+<div class="butt-up">
+    <a class="btn-up btn-up_hide" id="btn-up" href="#nav"><i class="fas fa-arrow-up"></i></a>
+</div>
+
+<main class="support-container">
+    <!-- Форма отзыва / редактирование -->
+    <section class="support-form-section">
+        <h2><?php echo $my_review ? 'Редактировать отзыв' : 'Оставить отзыв'; ?></h2>
+
+        <?php if (isset($_SESSION['message'])): ?>
+            <p style="color: #27ae60; background: #e8f5e8; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
+                <?php echo $_SESSION['message']; unset($_SESSION['message']); ?>
+            </p>
+        <?php endif; ?>
+
+        <?php if ($my_review): ?>
+            <div class="my-review-notice">
+                Вы уже оставили отзыв. Редактируйте или отправьте — он обновится.
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" action="update_review.php">
+            <input type="hidden" name="review_id" value="<?php echo $my_review['id'] ?? ''; ?>">
+
+            <div class="form-group">
+                <label for="name">Ваше имя</label>
+                <input type="text" name="name" id="name" value="<?php echo htmlspecialchars($_SESSION['user_name'] ?? ($my_review['name'] ?? '')); ?>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($_SESSION['user_email'] ?? ($my_review['email'] ?? '')); ?>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Ваш отзыв</label>
+                <textarea name="description" id="description" rows="5" maxlength="500" required><?php echo htmlspecialchars($my_review['description'] ?? ''); ?></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Оцените сайт</label>
+                <div class="rating">
+                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                        <input type="radio" name="rating" value="<?php echo $i; ?>" id="star<?php echo $i; ?>" <?php echo (isset($my_review) && $my_review['rating'] == $i) ? 'checked' : ''; ?> required>
+                        <label for="star<?php echo $i; ?>">★</label>
+                    <?php endfor; ?>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit <?php echo $my_review ? 'btn-edit' : ''; ?>">
+                <?php echo $my_review ? 'Обновить отзыв' : 'Отправить отзыв'; ?>
+            </button>
+        </form>
+    </section>
+
+    <!-- Последние отзывы -->
+    <section class="reviews-section">
+        <h2>Последние отзывы</h2>
+        <?php if (count($reviews) > 0): ?>
+            <?php foreach ($reviews as $review): ?>
+                <div class="review-card">
+                    <div class="review-name"><?php echo htmlspecialchars($review['name']); ?></div>
+                    <div class="review-rating">
+                        <?php echo str_repeat('★', $review['rating']) . str_repeat('☆', 5 - $review['rating']); ?>
+                    </div>
+                    <div class="review-text"><?php echo htmlspecialchars($review['description']); ?></div>
+                    <div class="review-date"><?php echo date('d.m.Y', strtotime($review['created_at'])); ?></div>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p class="no-reviews">Пока нет отзывов. Будьте первым!</p>
+        <?php endif; ?>
+    </section>
+</main>
+
+<!-- Футер -->
+<footer class="footer">
+    <div class="footer-col">
+        <h4>Меню</h4>
+        <ul>
+            <li><a href="../catalog/catalog.php?category=Бургеры">Бургеры</a></li>
+            <li><a href="../catalog/catalog.php?category=Пицца">Пицца</a></li>
+            <li><a href="../catalog/catalog.php?category=Суши">Суши</a></li>
+            <li><a href="../catalog/catalog.php?category=Шаурма">Шаурма</a></li>
+            <li><a href="../catalog/catalog.php?category=Выпечка">Выпечка</a></li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h4>О нас</h4>
+        <ul>
+            <li><a href="../about/about.php">О компании</a></li>
+            <li><a href="../gallery/gallery.php">Галерея</a></li>
+            <li><a href="../support/support.php">Поддержка</a></li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h4>Контакты</h4>
+        <ul>
+            <li><i class="fas fa-phone"></i> 8 800 555 35 35</li>
+            <li><i class="fas fa-envelope"></i> info@meetforeat.ru</li>
+            <li><i class="fas fa-map-marker-alt"></i> Москва, ул. Енисейская, 15</li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h4>Мы в соцсетях</h4>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-vk"></i></a>
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+    </div>
+</footer>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const btnUp = document.getElementById('btn-up');
+        if (btnUp) {
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    btnUp.classList.add('btn-up_show');
+                } else {
+                    btnUp.classList.remove('btn-up_show');
+                }
+            });
+            btnUp.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        const updateCartCount = () => {
+            const count = <?= $_SESSION['cart_count'] ?? 0 ?>;
+            const counter = document.getElementById('cart-count');
+            if (counter) {
+                counter.textContent = count;
+                counter.style.animation = 'none';
+                setTimeout(() => { counter.style.animation = 'pop 0.3s ease'; }, 10);
+            }
+        };
+        updateCartCount();
+    });
+
+</script>
+
+</body>
+</html>
