@@ -1,17 +1,16 @@
-<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>MeetForEat – Быстрая доставка вкусной еды</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="media-query.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="https://meetforeat.ru/favicon.png" type="image/x-icon">
-    <link rel="shortcut icon" href="https://meetforeat.ru/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="media-query.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="icon" href="https://meetforeat.ru/favicon.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="https://meetforeat.ru/favicon.png" type="image/x-icon" />
 </head>
 <body>
 
@@ -19,7 +18,7 @@
 <nav class="nav" id="nav">
     <div class="logo">
         <a href="../index.php">
-            <img src="../images/Иконки и логотип/logo.png" alt="MeetForEat">
+            <img src="../images/Иконки и логотип/logo.png" alt="MeetForEat" />
         </a>
     </div>
     <div class="nav-menu">
@@ -27,21 +26,22 @@
         <a class="nav_item" href="../gallery/gallery.php">Галерея</a>
         <a class="nav_item" href="../support/support.php">Поддержка</a>
         <a class="nav_item" href="../about/about.php">О нас</a>
-
-        <?php if (isset($_SESSION['login'])): ?>
-            <a class="nav_item" href="../profile/profile.php">Профиль</a>
-            <p>
-                <a class="nav_item" href="../cart/cart.php">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span id="cart-count" class="cart-counter">
-                        <?= $_SESSION['cart_count'] ?? 0 ?>
-                    </span>
-                </a>
-            </p>
-        <?php else: ?>
-            <a class="nav_item" href="../login/login.php">Войти</a>
-            <a class="nav_item" href="../reg/reg.php">Регистрация</a>
-        <?php endif; ?>
+        <!-- Временно статические ссылки для профиля или входа -->
+        <!-- Например: -->
+        <!--
+        <a class="nav_item" href="../profile/profile.php">Профиль</a>
+        <p>
+            <a class="nav_item" href="../cart/cart.php">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count" class="cart-counter">0</span>
+            </a>
+        </p>
+        -->
+        <!-- Или для гостя: -->
+        <!--
+        <a class="nav_item" href="../login/login.php">Войти</a>
+        <a class="nav_item" href="../reg/reg.php">Регистрация</a>
+        -->
     </div>
 </nav>
 
@@ -55,56 +55,27 @@
     <section class="block_one">
         <div class="slider" id="slider">
             <div class="slides" id="slides">
-                <?php
-                require_once("sql.php");
-                $sql_slider = "SELECT id, name, description, price, image, discount FROM menu_items WHERE available=1 ORDER BY id DESC LIMIT 5";
-                $result_slider = $conn->query($sql_slider);
-                if ($result_slider->num_rows > 0) {
-                    $i = 0;
-                    while ($row = $result_slider->fetch_assoc()) {
-                        $name = htmlspecialchars($row['name']);
-                        $desc = htmlspecialchars($row['description']);
-                        $price = (float)$row['price'];
-                        $discount = (int)($row['discount'] ?? 0);
-                        $discounted_price = $discount > 0 ? $price * (1 - $discount / 100) : $price;
-                        $price_formatted = number_format($price, 2, ',', ' ');
-                        $discounted_formatted = number_format($discounted_price, 2, ',', ' ');
-                        $image = htmlspecialchars($row['image']);
-                        $id = (int)$row['id'];
-                        $activeClass = $i === 0 ? ' active' : '';
-                        echo '<div class="slide' . $activeClass . '">';
-                        echo '<img src="images/Блюда/' . $image . '" alt="' . $name . '">';
-                        echo '<div class="description">';
-                        echo '<h3>' . $name . '</h3>';
-                        echo '<p>' . $desc . '</p>';
-                        if ($discount > 0) {
-                            echo '<div class="price">';
-                            echo '<span style="text-decoration: line-through; color: #ccc;">' . $price_formatted . ' ₽</span> ';
-                            echo '<b>' . $discounted_formatted . ' ₽</b>';
-                            echo '<span class="discount-badge">-' . $discount . '%</span>';
-                            echo '</div>';
-                        } else {
-                            echo '<div class="price">Цена: <b>' . $price_formatted . ' ₽</b></div>';
-                        }
-                        echo '<a href="../catalog/catalog.php" class="slide-btn">Заказать</a>';
-                        echo '</div></div>';
-                        $i++;
-                    }
-                } else {
-                    echo '<div class="slide active"><div class="description"><p>Нет блюд для отображения</p></div></div>';
-                }
-                ?>
+                <!-- Пример слайда -->
+                <div class="slide active">
+                    <img src="images/Блюда/example1.jpg" alt="Название блюда" />
+                    <div class="description">
+                        <h3>Название блюда</h3>
+                        <p>Описание блюда</p>
+                        <div class="price">
+                            <span style="text-decoration: line-through; color: #ccc;">100,00 ₽</span>
+                            <b>80,00 ₽</b>
+                            <span class="discount-badge">-20%</span>
+                        </div>
+                        <a href="../catalog/catalog.php" class="slide-btn">Заказать</a>
+                    </div>
+                </div>
+                <!-- Добавьте остальные слайды по необходимости -->
             </div>
             <div class="slider-dots" id="slider-dots">
-                <?php
-                $result_slider->data_seek(0);
-                $i = 0;
-                while ($row = $result_slider->fetch_assoc()) {
-                    $active = $i === 0 ? 'dot active' : 'dot';
-                    echo "<span class='$active' data-slide='$i'></span>";
-                    $i++;
-                }
-                ?>
+                <span class="dot active" data-slide="0"></span>
+                <span class="dot" data-slide="1"></span>
+                <span class="dot" data-slide="2"></span>
+                <!-- и так далее -->
             </div>
         </div>
     </section>
@@ -113,69 +84,42 @@
     <section class="cards-section">
         <h2 class="section-title">Популярные блюда</h2>
         <div class="products-main" id="products-container">
-            <?php
-            require_once("sql.php");
-            $filter = isset($_GET['filter']) ? trim($_GET['filter']) : '';
-            $sql_products = "SELECT id, name, description, price, image, category, discount FROM menu_items WHERE available=1";
-            if ($filter !== 'all' && !empty($filter)) {
-                $filter = $conn->real_escape_string($filter);
-                $sql_products .= " AND category = '$filter'";
-            }
-            $sql_products .= " ORDER BY views DESC LIMIT 8";
-            $result_products = $conn->query($sql_products);
-
-            if ($result_products->num_rows > 0) {
-                while ($product_main = $result_products->fetch_assoc()) {
-                    $name = htmlspecialchars($product_main['name']);
-                    $desc = htmlspecialchars($product_main['description']);
-                    $desc = mb_strlen($desc, 'UTF-8') > 60 ? mb_substr($desc, 0, 60, 'UTF-8') . '...' : $desc;
-                    $price = (float)$product_main['price'];
-                    $discount = (int)($product_main['discount'] ?? 0);
-                    $discounted_price = $discount > 0 ? $price * (1 - $discount / 100) : $price;
-                    $price_formatted = number_format($price, 2, ',', ' ');
-                    $discounted_formatted = number_format($discounted_price, 2, ',', ' ');
-                    $image = htmlspecialchars($product_main['image']);
-                    $category = htmlspecialchars($product_main['category'] ?? 'Разное');
-                    $id = (int)$product_main['id'];
-
-                    echo '
-                    <div class="product-card-main" data-category="' . $category . '">
-                        ' . ($discount > 0 
-                            ? '<div class="product-badge-main discount">-' . $discount . '%</div>' 
-                            : '<div class="product-badge-main">Хит</div>') . '
-                        <div class="product-img-wrapper-main">
-                            <img src="images/Блюда/' . $image . '" alt="' . $name . '" class="product-img-main">
-                        </div>
-                        <div class="product-info-main">
-                            <h3 class="product-title-main">' . $name . '</h3>
-                            <p class="product-desc-main">' . $desc . '</p>
-                            <p class="product-price-main">
-                                <b>' . $discounted_formatted . ' ₽</b>
-                                ' . ($discount > 0 ? '<span class="old-price-main">' . $price_formatted . ' ₽</span>' : '') . '
-                            </p>
-                            <div class="buttons-main" style="display: flex; gap: 10px; margin-top: 12px; padding: 0 16px 16px;">
-                                <form class="add-to-cart-form" method="POST" action="/cart/add_to_cart.php" style="flex: 1;">
-                                    <input type="hidden" name="product_id" value="' . $id . '">
-                                    <input type="hidden" name="name" value="' . $name . '">
-                                    <input type="hidden" name="price" value="' . number_format($discounted_price, 2, '.', '') . '">
-                                    <button type="submit" class="btn-main btn-buy-main" style="width: 100%; text-decoration: none;">
-                                        <i class="fas fa-plus"></i> В корзину
-                                    </button>
-                                </form>
-                                <a href="../item_info/item_info.php?id=' . $id . '" 
-                                   class="btn-main btn-details-main" 
-                                   style="width: 48px; min-width: 48px; text-decoration: none; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-info-circle"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>';
-                }
-            } else {
-                echo '<p class="no-products">Нет блюд в этой категории.</p>';
-            }
-            $conn->close();
-            ?>
+            <!-- Пример карточки -->
+            <div class="product-card-main" data-category="Категория">
+                <div class="product-badge-main discount">-15%</div>
+                <div class="product-img-wrapper-main">
+                    <img src="images/Блюда/example.jpg" alt="Название блюда" class="product-img-main" />
+                </div>
+                <div class="product-info-main">
+                    <h3 class="product-title-main">Название блюда</h3>
+                    <p class="product-desc-main">Краткое описание блюда...</p>
+                    <p class="product-price-main">
+                        <b>80,00 ₽</b>
+                        <span class="old-price-main">100,00 ₽</span>
+                    </p>
+                    <div
+                        class="buttons-main"
+                        style="display: flex; gap: 10px; margin-top: 12px; padding: 0 16px 16px;"
+                    >
+                        <form class="add-to-cart-form" method="POST" action="/cart/add_to_cart.php" style="flex: 1;">
+                            <input type="hidden" name="product_id" value="1" />
+                            <input type="hidden" name="name" value="Название блюда" />
+                            <input type="hidden" name="price" value="80.00" />
+                            <button type="submit" class="btn-main btn-buy-main" style="width: 100%; text-decoration: none;">
+                                <i class="fas fa-plus"></i> В корзину
+                            </button>
+                        </form>
+                        <a
+                            href="../item_info/item_info.php?id=1"
+                            class="btn-main btn-details-main"
+                            style="width: 48px; min-width: 48px; text-decoration: none; display: flex; align-items: center; justify-content: center;"
+                        >
+                            <i class="fas fa-info-circle"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Повторяйте карточки по необходимости -->
         </div>
     </section>
 
@@ -315,4 +259,3 @@
 </script>
 </body>
 </html>
-
