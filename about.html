@@ -438,10 +438,27 @@
         });
     }
 </script>
-<!-- Подключение API Google Maps -->
-<script src="https://maps.googleapis.com/maps/api/js?key=74d5a3fb-1f01-40a6-ae02-207449484b9c&callback=initMap" async defer></script>
+<!-- В конце внутри body перед </body> -->
+<h2 class="section-title">Наш офис</h2>
+<div id="map"></div>
+
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+<script type="text/javascript">
+    ymaps.ready(function () {
+        var myMap = new ymaps.Map("map", {
+            center: [55.7558, 37.6173], // Москва
+            zoom: 10
+        });
+        var myPlacemark = new ymaps.Placemark([55.7558, 37.6173], {
+            hintContent: 'Москва',
+            balloonContent: 'Наш офис в Москве'
+        });
+        myMap.geoObjects.add(myPlacemark);
+    });
+</script>
 </body>
 </html>
+
 
 
 
