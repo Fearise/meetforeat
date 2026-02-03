@@ -202,6 +202,14 @@
             margin: 12px 0;
         }
 
+        /* === Карта === */
+        #map {
+            width: 100%;
+            height: 400px;
+            margin-top: 40px;
+            border-radius: 10px;
+        }
+
         /* === Адаптив === */
         @media (max-width: 768px) {
             .about-hero h1 {
@@ -243,9 +251,7 @@
         <a class="nav_item" href="gallery.html">Галерея</a>
         <a class="nav_item" href="support.html">Поддержка</a>
         <a class="nav_item" href="about.html">О нас</a>
-
-        <!-- Предполагаемое отображение для авторизованных пользователей -->
-        <!-- Замените на нужное условие или статичное значение -->
+        <!-- Предполагается, что пользователь авторизован -->
         <a class="nav_item" href="profile.php">Профиль</a>
         <p>
             <a class="nav_item" href="cart.php">
@@ -253,7 +259,8 @@
                 <span id="cart-count" class="cart-counter">0</span>
             </a>
         </p>
-        <!-- Для неавторизованных пользователей:
+        <!-- Для неавторизованных — закомментируйте или удалите -->
+        <!--
         <a class="nav_item" href="login.php">Войти</a>
         <a class="nav_item" href="reg.php">Регистрация</a>
         -->
@@ -339,6 +346,8 @@
         <p><i class="fas fa-map-marker-alt"></i> Москва, ул. Енисейская, 15</p>
         <p><i class="fas fa-clock"></i> Работаем 24/7</p>
     </div>
+    <!-- Карта -->
+    <div id="map"></div>
 </main>
 
 <!-- Футер -->
@@ -402,11 +411,10 @@
     });
 
     function updateCartCount() {
-        const count = 0; // Статическое значение вместо PHP
+        const count = 0; // статическое значение
         const counter = document.getElementById('cart-count');
         if (counter) {
             counter.textContent = count;
-
             // Анимация
             counter.style.animation = 'none';
             setTimeout(() => {
@@ -414,12 +422,25 @@
             }, 10);
         }
     }
-
-    // Вызываем при загрузке
     document.addEventListener('DOMContentLoaded', updateCartCount);
+
+    // Инициализация карты Google Maps
+    function initMap() {
+        const location = { lat: 55.7558, lng: 37.6173 }; // Москва
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 10,
+            center: location,
+        });
+        const marker = new google.maps.Marker({
+            position: location,
+            map: map,
+            title: "Москва",
+        });
+    }
 </script>
+<!-- Подключение API Google Maps -->
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
 </body>
 </html>
-
 
 
