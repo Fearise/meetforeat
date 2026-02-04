@@ -1,15 +1,63 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Поддержка – MeetForEat</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="media-query.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="media-query.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="icon" href="https://fearise.github.io/meetforeat/favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="https://fearise.github.io/meetforeat/favicon.ico" type="image/x-icon" />
+    <style>
+        /* Стиль для формы поиска */
+        .search-form {
+            display: flex;
+            align-items: center;
+            margin-left: 20px; /* чуть отступа слева */
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 300px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            outline: none;
+            font-size: 1em;
+            border-radius: 20px 0 0 20px;
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        .search-button {
+            background: #e94e77;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0 20px 20px 0;
+            transition: background 0.3s ease;
+        }
+
+        .search-button:hover {
+            background: #d03a60;
+        }
+
+        .search-button i {
+            color: #fff;
+            font-size: 1.2em;
+        }
+    </style>
 </head>
 <body>
 
@@ -17,29 +65,26 @@
 <nav class="nav" id="nav">
     <div class="logo">
         <a href="index.html">
-            <img src="logo.png" alt="MeetForEat">
+            <img src="logo.png" alt="MeetForEat" />
         </a>
     </div>
-    <div class="nav-menu">
+    <div class="nav-menu" style="display: flex; align-items: center;">
+        <!-- Вставляем форму поиска сюда -->
+        <form class="search-form" action="search_results.html" method="GET" role="search">
+            <input type="text" name="query" class="search-input" placeholder="Поиск..." />
+            <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
+        </form>
         <a class="nav_item" href="catalog.html">Меню</a>
         <a class="nav_item" href="gallery.html">Галерея</a>
         <a class="nav_item" href="support.html">Поддержка</a>
         <a class="nav_item" href="about.html">О нас</a>
-
-        <?php if (isset($_SESSION['login'])): ?>
-            <a class="nav_item" href="profile.html">Профиль</a>
-            <p>
-                <a class="nav_item" href="cart.html">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span id="cart-count" class="cart-counter">
-                        <?= $_SESSION['cart_count'] ?? 0 ?>
-                    </span>
-                </a>
-            </p>
-        <?php else: ?>
-            <a class="nav_item" href="login.html">Войти</a>
-            <a class="nav_item" href="reg.html">Регистрация</a>
-        <?php endif; ?>
+        <a class="nav_item" href="profile.html">Профиль</a>
+        <p>
+            <a class="nav_item" href="cart.html">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count" class="cart-counter">0</span>
+            </a>
+        </p>
     </div>
 </nav>
 
@@ -51,71 +96,50 @@
 <main class="support-container">
     <!-- Форма отзыва / редактирование -->
     <section class="support-form-section">
-        <h2><?php echo $my_review ? 'Редактировать отзыв' : 'Оставить отзыв'; ?></h2>
+        <h2>Оставить отзыв</h2>
 
-        <?php if (isset($_SESSION['message'])): ?>
-            <p style="color: #27ae60; background: #e8f5e8; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
-                <?php echo $_SESSION['message']; unset($_SESSION['message']); ?>
-            </p>
-        <?php endif; ?>
+        <!-- Сообщение -->
+        <p style="color: #27ae60; background: #e8f5e8; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
+            Здесь может быть сообщение после отправки формы
+        </p>
 
-        <?php if ($my_review): ?>
-            <div class="my-review-notice">
-                Вы уже оставили отзыв. Редактируйте или отправьте — он обновится.
-            </div>
-        <?php endif; ?>
-
+        <!-- Форма отзывов -->
         <form method="POST" action="update_review.php">
-            <input type="hidden" name="review_id" value="<?php echo $my_review['id'] ?? ''; ?>">
-
             <div class="form-group">
                 <label for="name">Ваше имя</label>
-                <input type="text" name="name" id="name" value="<?php echo htmlspecialchars($_SESSION['user_name'] ?? ($my_review['name'] ?? '')); ?>" required>
+                <input type="text" name="name" id="name" required>
             </div>
-
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($_SESSION['user_email'] ?? ($my_review['email'] ?? '')); ?>" required>
+                <input type="email" name="email" id="email" required>
             </div>
-
             <div class="form-group">
                 <label for="description">Ваш отзыв</label>
-                <textarea name="description" id="description" rows="5" maxlength="500" required><?php echo htmlspecialchars($my_review['description'] ?? ''); ?></textarea>
+                <textarea name="description" id="description" rows="5" maxlength="500" required></textarea>
             </div>
-
             <div class="form-group">
                 <label>Оцените сайт</label>
                 <div class="rating">
-                    <?php for ($i = 1; $i <= 5; $i++): ?>
-                        <input type="radio" name="rating" value="<?php echo $i; ?>" id="star<?php echo $i; ?>" <?php echo (isset($my_review) && $my_review['rating'] == $i) ? 'checked' : ''; ?> required>
-                        <label for="star<?php echo $i; ?>">★</label>
-                    <?php endfor; ?>
+                    <input type="radio" name="rating" value="1" id="star1" required>
+                    <label for="star1">★</label>
+                    <input type="radio" name="rating" value="2" id="star2" required>
+                    <label for="star2">★</label>
+                    <input type="radio" name="rating" value="3" id="star3" required>
+                    <label for="star3">★</label>
+                    <input type="radio" name="rating" value="4" id="star4" required>
+                    <label for="star4">★</label>
+                    <input type="radio" name="rating" value="5" id="star5" required>
+                    <label for="star5">★</label>
                 </div>
             </div>
-
-            <button type="submit" class="btn-submit <?php echo $my_review ? 'btn-edit' : ''; ?>">
-                <?php echo $my_review ? 'Обновить отзыв' : 'Отправить отзыв'; ?>
-            </button>
+            <button type="submit" class="btn-submit">Отправить отзыв</button>
         </form>
     </section>
 
     <!-- Последние отзывы -->
     <section class="reviews-section">
         <h2>Последние отзывы</h2>
-        <?php if (count($reviews) > 0): ?>
-            <?php foreach ($reviews as $review): ?>
-                <div class="review-card">
-                    <div class="review-name"><?php echo htmlspecialchars($review['name']); ?></div>
-                    <div class="review-rating">
-                        <?php echo str_repeat('★', $review['rating']) . str_repeat('☆', 5 - $review['rating']); ?>
-                    </div>
-                    <div class="review-text"><?php echo htmlspecialchars($review['description']); ?></div>
-                    <div class="review-date"><?php echo date('d.m.Y', strtotime($review['created_at'])); ?></div>
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p class="no-reviews">Пока нет отзывов. Будьте первым!</p>
-        <?php endif; ?>
+        <p>Пока нет отзывов. Будьте первым!</p>
     </section>
 </main>
 
@@ -158,7 +182,6 @@
     </div>
 </footer>
 
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const btnUp = document.getElementById('btn-up');
@@ -176,7 +199,7 @@
         }
 
         const updateCartCount = () => {
-            const count = <?= $_SESSION['cart_count'] ?? 0 ?>;
+            const count = 0; // статическое значение
             const counter = document.getElementById('cart-count');
             if (counter) {
                 counter.textContent = count;
@@ -186,11 +209,11 @@
         };
         updateCartCount();
     });
-
 </script>
 
 </body>
 </html>
+
 
 
 
