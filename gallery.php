@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Галерея блюд – MeetForEat</title>
-    <link rel="stylesheet" href="../styles/style.css">
-    <link rel="stylesheet" href="../styles/media-query.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="media-query.css">
      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -355,20 +355,20 @@
 <!-- Навигация -->
 <nav class="nav" id="nav">
     <div class="logo">
-        <a href="../index.php">
-            <img src="../images/Иконки и логотип/logo.png" alt="MeetForEat">
+        <a href="index.html">
+            <img src="logo.png" alt="MeetForEat">
         </a>
     </div>
     <div class="nav-menu">
-        <a class="nav_item" href="../catalog/catalog.php">Меню</a>
-        <a class="nav_item" href="../gallery/gallery.php">Галерея</a>
-        <a class="nav_item" href="../support/support.php">Поддержка</a>
-        <a class="nav_item" href="../about/about.php">О нас</a>
+        <a class="nav_item" href="catalog.html">Меню</a>
+        <a class="nav_item" href="gallery.html">Галерея</a>
+        <a class="nav_item" href="support.html">Поддержка</a>
+        <a class="nav_item" href="about.html">О нас</a>
 
         <?php if (isset($_SESSION['login'])): ?>
-            <a class="nav_item" href="../profile/profile.php">Профиль</a>
+            <a class="nav_item" href="profile.html">Профиль</a>
             <p>
-                <a class="nav_item" href="../cart/cart.php">
+                <a class="nav_item" href="cart.html">
                     <i class="fas fa-shopping-cart"></i>
                     <span id="cart-count" class="cart-counter">
                         <?= $_SESSION['cart_count'] ?? 0 ?>
@@ -376,8 +376,8 @@
                 </a>
             </p>
         <?php else: ?>
-            <a class="nav_item" href="../login/login.php">Войти</a>
-            <a class="nav_item" href="../reg/reg.php">Регистрация</a>
+            <a class="nav_item" href="login.html">Войти</a>
+            <a class="nav_item" href="reg.html">Регистрация</a>
         <?php endif; ?>
     </div>
 </nav>
@@ -392,7 +392,7 @@
 
     <div class="gallery-grid" id="galleryGrid">
         <?php
-        require_once('../sql.php');
+        require_once('sql.php');
         if ($conn->connect_error) {
             die("Ошибка подключения: " . $conn->connect_error);
         }
@@ -618,3 +618,4 @@ modal.addEventListener('click', (e) => {
 </script>
 </body>
 </html>
+
